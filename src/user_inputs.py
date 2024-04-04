@@ -35,12 +35,11 @@ def handle_camera_movement(dt: float):
 def handle_camera_zoom(x: int, y: int, scroll_x: float, scroll_y: float):
     # TODO: Zoom in to where the cursor is
 
-    MIN_ZOOM = 0.5
-    MAX_ZOOM = 2.0
+    MIN_ZOOM = 0.8
+    MAX_ZOOM = 4.0
 
     new_zoom = camera_attrs['scale'] + scroll_y
-    if new_zoom < MIN_ZOOM or new_zoom > MAX_ZOOM:
-        return
+    new_zoom = pyglet.math.clamp(new_zoom, MIN_ZOOM, MAX_ZOOM)
 
     camera_attrs['scale'] = new_zoom
 
