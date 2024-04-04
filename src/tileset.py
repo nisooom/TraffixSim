@@ -1,9 +1,10 @@
-from src.common import display_window
+
+from src.common import mouse_handler, camera_attrs
 import pyglet
 from enum import Enum, auto
 
 
-class TileSet():
+class TileSet:
 
     class TileType(Enum):
         TURN = auto()
@@ -24,48 +25,60 @@ class TileSet():
         TileType.NON_ROAD: (128, 128, 128)  # Gray
     }
 
-    def __init__(self, rows=50, columns=50):
-        self.width = display_window.width
-        self.height = display_window.height
+    def __init__(self, rows: int = 30, columns: int = 30, size: int = 16):
         self.rows = rows
         self.columns = columns
-        self.tileSize = (self.width // columns, self.height // rows)
+        self.tile_size = size
         self.batch = pyglet.graphics.Batch()
 
-        self.tiles = [[]]
+        self.tiles: list[list[Tile]] = [
+            [None for _ in range(self.columns)]
+            for _ in range(self.rows)
+        ]
 
-    def createTiles(self):
-        self.tiles = [[None for _ in range(self.columns)] for _ in range(self.rows)]
-        for y in range(self.rows):
-            for x in range(self.columns):
+        self.init_tiles()
+
+    def init_tiles(self):
+        for row in range(self.rows):
+            for col in range(self.columns):
                 tile_type = self.TileType.NON_ROAD  # Default type
-                tile = Tile(x * self.tileSize[0], y * self.tileSize[1], tile_type)
-                rectangle = pyglet.shapes.Rectangle(x * self.tileSize[0], y * self.tileSize[1],
-                                                    self.tileSize[0] - 1, self.tileSize[1] - 1,
-                                                    self.colors.get(tile_type), batch=self.batch)
-                tile.rectangle = rectangle  # Storing the rectangle in the Tile instance
-                self.tiles[y][x] = tile
+                tile = Tile(col, row, tile_type)
+                rectangle = pyglet.shapes.BorderedRectangle(
+                    x=col*self.tile_size, y=row*self.tile_size,
+                    width=self.tile_size, height=self.tile_size,
+                    color=self.get_color(tile_type), batch=self.batch
+                )
+                tile.rect = rectangle  # Storing the rectangle in the Tile instance
+                self.tiles[row][col] = tile
 
-    def drawTiles(self):
+    def draw(self):
         self.batch.draw()
 
-    def getColor(self, type):
-        return self.colors.get(type)
+    def get_color(self, type: TileType):
+        return self.colors[type]
 
-    def on_mouse_press(self, x, y, button, modifiers):
-        if button == pyglet.window.mouse.LEFT:
-            grid_x = x // self.tileSize[0]
-            grid_y = y // self.tileSize[1]
+    def handle_mouse_click(self, dt: float):
+        if not mouse_handler[pyglet.window.mouse.LEFT]:
+            return
+        
+        x = mouse_handler['x'] - int(camera_attrs['position'][0])
+        y = mouse_handler['y'] - int(camera_attrs['position'][1])
 
-            clicked_tile = self.tiles[grid_y][grid_x]
+        adjusted_tile_size = self.tile_size * camera_attrs['scale']
+        tile_col = int(x / adjusted_tile_size)
+        tile_row = int(y / adjusted_tile_size)
 
-            clicked_tile.tileType = self.TileType.INTERSECTION
-            clicked_tile.rectangle.color = self.colors.get(self.TileType.INTERSECTION)
+        if tile_col not in range(self.columns) or tile_row not in range(self.rows):
+            return
+
+        clicked_tile = self.tiles[tile_row][tile_col]
+        clicked_tile.tile_type = self.TileType.INTERSECTION
+        clicked_tile.rect.color = self.get_color(clicked_tile.tile_type)
 
 
 class Tile:
-    def __init__(self, x, y, tile_type):
-        self.tileType = tile_type
+    def __init__(self, x: int, y: int, tile_type: TileSet.TileType):
+        self.tile_type = tile_type
         self.x = x
         self.y = y
-        self.rect= None
+        self.rect: pyglet.shapes.Rectangle = None

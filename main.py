@@ -18,22 +18,17 @@ names = pyglet.text.Label("By Siddharth, Nishumbh, Dev, Hamza.", font_name="Cons
                           anchor_x='center', anchor_y='center')
 
 tiles = TileSet()
-tiles.createTiles()
 
 
 @display_window.event
 def on_draw():
     display_window.clear()
-    tiles.drawTiles()
+    tiles.draw()
 
     # label.draw()
     # names.draw()
 
 
-@display_window.event
-def on_mouse_press(x, y, button, modifiers):
-    tiles.on_mouse_press(x, y, button, modifiers)
-
-
 pyglet.clock.schedule_interval(handle_user_input, 1/30)
+pyglet.clock.schedule_interval(tiles.handle_mouse_click, 1/30)
 pyglet.app.run()
