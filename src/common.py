@@ -4,7 +4,7 @@ from pyglet.window import Window, key, mouse
 
 
 display_window = Window(
-    width=800, height=450,
+    width=800, height=800,
     caption="TraffixSim"
 )
 
