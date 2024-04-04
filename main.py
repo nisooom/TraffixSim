@@ -1,4 +1,5 @@
 
+from src.user_inputs import handle_user_input
 from src.common import display_window
 import pyglet
 
@@ -18,4 +19,5 @@ def on_draw():
     label.draw()
 
 
+pyglet.clock.schedule_interval(handle_user_input, 1/30)
 pyglet.app.run()
