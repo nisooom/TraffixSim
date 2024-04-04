@@ -3,7 +3,7 @@ import pyglet
 
 
 display_window = pyglet.window.Window(
-    width=800, height=450,
+    width=800, height=800,
     caption="TraffixSim"
 )
 
