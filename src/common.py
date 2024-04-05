@@ -3,8 +3,12 @@ import pyglet
 from pyglet.window import Window, key, mouse
 
 
+window_width = 800
+window_height = 800
+
+
 display_window = Window(
-    width=800, height=800,
+    width=window_width, height=window_height,
     caption="TraffixSim"
 )
 
