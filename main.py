@@ -1,8 +1,9 @@
 
 from src.user_inputs import handle_user_input
 from src.common import display_window
-import pyglet
+from src.vehicle import Vehicle
 from src.tileset import TileSet
+import pyglet
 
 # TODO: add clamps on grids so that we can add gui on the side.
 
@@ -19,12 +20,21 @@ names = pyglet.text.Label("By Siddharth, Nishumbh, Dev, Hamza.", font_name="Cons
 
 tiles = TileSet()
 
+vehicles = []
+for y in range(15):
+    for x in range(15):
+        v = Vehicle()
+        v.scale = 0.2
+        v.position = ((x+1)*30, (y+1)*30, 0)
+        vehicles.append(v)
+
 
 @display_window.event
 def on_draw():
     display_window.clear()
     tiles.draw()
 
+    Vehicle.draw_all()
     # label.draw()
     # names.draw()
 
