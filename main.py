@@ -18,14 +18,14 @@ names = pyglet.text.Label("By Siddharth, Nishumbh, Dev, Hamza.", font_name="Cons
                           x=display_window.width / 2, y=display_window.height / 2 - 28,
                           anchor_x='center', anchor_y='center')
 
-tiles = TileSet()
+tiles = TileSet(rows=15, columns=15, size=64)
 
 vehicles = []
-for y in range(15):
-    for x in range(15):
+for y in range(20):
+    for x in range(20):
         v = Vehicle()
-        v.scale = 0.2
-        v.position = ((x+1)*30, (y+1)*30, 0)
+        v.scale = 0.12
+        v.position = ((x+1)*25, (y+1)*25, 0)
         vehicles.append(v)
 
 
