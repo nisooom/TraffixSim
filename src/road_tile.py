@@ -108,7 +108,7 @@ class RoadTile:
 
         self.sprite.position = (
             position[1] * simulation_map_attrs["tile_size"],
-            position[0] * simulation_map_attrs["tile_size"],
+            position[0] * -simulation_map_attrs["tile_size"],
             0
         )
         self.sprite.scale = simulation_map_attrs["tile_size"] / 64
