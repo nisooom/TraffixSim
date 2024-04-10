@@ -24,12 +24,12 @@ class Simulation:
         _dummy_data.extend((RoadType.THREE_WAY_INTERSECTION, info) for info in ("west-north-east", "north-east-south", "east-south-west", "south-west-north"))
         _dummy_data.append((RoadType.FOUR_WAY_INTERSECTION, ""))
 
-        for i in range(simulation_map_attrs["num_rows"]):
-            for j in range(simulation_map_attrs["num_cols"]):
+        for r in range(simulation_map_attrs["num_rows"]):
+            for c in range(simulation_map_attrs["num_cols"]):
                 type, info = random.choice(_dummy_data)
-                self.road_tiles[i][j] = RoadTile((i, j), type, info)
-                self.road_tiles[i][j].sprite.group = self.road_group
-                self.road_tiles[i][j].sprite.batch = self.batch
+                self.road_tiles[r][c] = RoadTile((r, c), type, info)
+                self.road_tiles[r][c].sprite.group = self.road_group
+                self.road_tiles[r][c].sprite.batch = self.batch
 
     def draw(self):
         self.batch.draw()

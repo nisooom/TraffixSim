@@ -29,8 +29,8 @@ class RoadType(Enum):
 # map to get the rotations of each road for each case
 rotations_dict = {
     RoadType.STRAIGHT: {
-        "north-south": 0,
-        "east-west": 180,
+        "north-south": 90,
+        "east-west": 0,
     },
     RoadType.TURN: {
         "north-east": 90,
@@ -112,3 +112,6 @@ class RoadTile:
             0
         )
         self.sprite.scale = simulation_map_attrs["tile_size"] / 64
+
+    def __repr__(self) -> str:
+        return f"RoadTile({self.position=}, {self.type=}, {self.info=}, {self.sprite.position=})"
