@@ -26,3 +26,10 @@ camera_attrs = {
     'position': [0.0, 0.0, 0.0],
     'scale': 1.0,
 }
+
+
+simulation_map_attrs = {
+    'num_rows': 15,
+    'num_cols': 15,
+    'tile_size': 64,
+}
