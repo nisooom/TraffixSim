@@ -18,33 +18,11 @@ none_road_tex.anchor_x = 32
 none_road_tex.anchor_y = 32
 
 
-class RoadType(Enum):
-    NONE                   = auto()
-    STRAIGHT               = auto()
-    TURN                   = auto()
-    THREE_WAY_INTERSECTION = auto()
-    FOUR_WAY_INTERSECTION  = auto()
-
-
-# map to get the rotations of each road for each case
-rotations_dict = {
-    RoadType.STRAIGHT: {
-        "north-south": 90,
-        "east-west": 0,
-    },
-    RoadType.TURN: {
-        "north-east": 90,
-        "north-west": 0,
-        "south-east": 180,
-        "south-west": 270,
-    },
-    RoadType.THREE_WAY_INTERSECTION: {
-        "west-north-east": 0,
-        "north-east-south": 90,
-        "east-south-west": 180,
-        "south-west-north": 270,
-    }
-}
+class Direction(Enum):
+    NORTH = auto()
+    EAST  = auto()
+    WEST  = auto()
+    SOUTH = auto()
 
 
 def _get_region(x: int, y: int) -> image.TextureRegion:
@@ -54,57 +32,37 @@ def _get_region(x: int, y: int) -> image.TextureRegion:
     return region
 
 
-def _get_straight_road(type: str) -> sprite.Sprite:
-    tex = _get_region(2, 2)
-    out = sprite.Sprite(tex)
-    out.rotation = rotations_dict[RoadType.STRAIGHT][type]
+# map to get the rotations of each road for each case
+texregion_rotation_dict: dict[tuple[Direction, ...], tuple[image.TextureRegion, int]] = {
+    (): (none_road_tex, 0), # none road
+    (Direction.NORTH, Direction.SOUTH): (_get_region(2, 2), 1), # straight road
+    (Direction.EAST,  Direction.WEST ): (_get_region(2, 2), 0), # straight road
+    (Direction.NORTH, Direction.EAST ): (_get_region(2, 1), 1), # turn road
+    (Direction.NORTH, Direction.WEST ): (_get_region(2, 1), 0), # turn road
+    (Direction.EAST,  Direction.SOUTH): (_get_region(2, 1), 2), # turn road
+    (Direction.WEST,  Direction.SOUTH): (_get_region(2, 1), 3), # turn road
+    (Direction.NORTH, Direction.EAST,  Direction.WEST ): (_get_region(4, 1), 0), # three way intersection
+    (Direction.NORTH, Direction.EAST,  Direction.SOUTH): (_get_region(4, 1), 1), # three way intersection
+    (Direction.EAST,  Direction.WEST,  Direction.SOUTH): (_get_region(4, 1), 2), # three way intersection
+    (Direction.NORTH, Direction.WEST,  Direction.SOUTH): (_get_region(4, 1), 3), # three way intersection
+    (Direction.NORTH, Direction.EAST, Direction.WEST, Direction.SOUTH): (_get_region(0, 0), 0) # four way intersection
+}
+
+
+def get_sprite(d_tup: tuple[Direction, ...]) -> sprite.Sprite:
+    region, rot = texregion_rotation_dict[d_tup]
+    out = sprite.Sprite(region)
+    out.rotation = rot * 90
     return out
-
-
-def _get_turn_road(type: str) -> sprite.Sprite:
-    tex = _get_region(2, 1)
-    out = sprite.Sprite(tex)
-    out.rotation = rotations_dict[RoadType.TURN][type]
-    return out
-
-
-def _get_three_way_intersection_road(type: str) -> sprite.Sprite:
-    tex = _get_region(4, 1)
-    out = sprite.Sprite(tex)
-    out.rotation = rotations_dict[RoadType.THREE_WAY_INTERSECTION][type]
-    return out
-
-
-def _get_four_way_intersection_road(_: str) -> sprite.Sprite:
-    tex = _get_region(0, 0)
-    out = sprite.Sprite(tex)
-    return out
-
-
-def _get_none_road(_: str) -> sprite.Sprite:
-    out = sprite.Sprite(none_road_tex)
-    return out
-
-
-def get_sprite(type: RoadType, info: str) -> sprite.Sprite:
-    road_sprite_map = {
-        RoadType.NONE: _get_none_road,
-        RoadType.STRAIGHT: _get_straight_road,
-        RoadType.TURN: _get_turn_road,
-        RoadType.THREE_WAY_INTERSECTION: _get_three_way_intersection_road,
-        RoadType.FOUR_WAY_INTERSECTION: _get_four_way_intersection_road,
-    }
-    return road_sprite_map[type](info)
 
 
 class RoadTile:
 
-    def __init__(self, position: tuple[int, int], type: RoadType, info: str = ""):
+    def __init__(self, position: tuple[int, int], d_tup: tuple[Direction, ...]):
         self.position = position
-        self.type = type
-        self.info = info
+        self.d_tup = d_tup
 
-        self.sprite: sprite.Sprite = get_sprite(type, info)
+        self.sprite: sprite.Sprite = get_sprite(d_tup)
 
         self.sprite.position = (
             position[1] * simulation_map_attrs["tile_size"],
