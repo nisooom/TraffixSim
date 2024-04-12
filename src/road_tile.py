@@ -1,8 +1,9 @@
 
 from src.common import simulation_map_attrs
+from src.direction import Direction
+from src.lane import Lane
 from pyglet import sprite, image
 from pyglet.gl import *
-from enum import Enum, auto
 
 
 road_sprite_sheet_img: image.ImageData = image.load('assets/new_roads/roads2W.png')
@@ -16,13 +17,6 @@ none_road_img: image.ImageData = image.create(64, 64, image.SolidColorImagePatte
 none_road_tex: image.Texture = none_road_img.get_texture()
 none_road_tex.anchor_x = 32
 none_road_tex.anchor_y = 32
-
-
-class Direction(Enum):
-    NORTH = auto()
-    EAST  = auto()
-    WEST  = auto()
-    SOUTH = auto()
 
 
 def _get_region(x: int, y: int) -> image.TextureRegion:
@@ -62,6 +56,8 @@ class RoadTile:
         self.position = position
         self.d_tup = d_tup
 
+        self.lanes = {}
+
         self.sprite: sprite.Sprite = get_sprite(d_tup)
 
         self.sprite.position = (
@@ -70,6 +66,11 @@ class RoadTile:
             0
         )
         self.sprite.scale = simulation_map_attrs["tile_size"] / 64
+
+        if len(self.d_tup) == 2:
+            a, b = self.d_tup
+            self.lanes[(a, b)] = Lane(self, a, b)
+            self.lanes[(b, a)] = Lane(self, b, a)
 
     def __repr__(self) -> str:
         return f"RoadTile({self.position=}, {self.type=}, {self.info=}, {self.sprite.position=})"

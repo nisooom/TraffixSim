@@ -1,6 +1,7 @@
 
 from src.user_inputs import handle_user_input
 from src.common import display_window
+from src.lane import Lane
 from src.simulation import Simulation
 import pyglet
 
@@ -13,6 +14,8 @@ simulation = Simulation()
 def on_draw():
     display_window.clear()
     simulation.draw()
+
+    Lane.batch.draw()
 
 
 pyglet.clock.schedule_interval(handle_user_input, 1/30)

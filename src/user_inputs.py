@@ -1,5 +1,5 @@
 
-from src.common import display_window, key_handler, camera_attrs
+from src.common import display_window, key_handler, mouse_handler, camera_attrs
 import pyglet
 
 
@@ -8,6 +8,8 @@ def _update_view_matrix():
     view_mat = view_mat.translate(camera_attrs['position'])
     view_mat = view_mat.scale([camera_attrs['scale'], camera_attrs['scale'], 1])
     display_window.view = view_mat
+
+_update_view_matrix()
 
 
 def handle_camera_movement(dt: float):

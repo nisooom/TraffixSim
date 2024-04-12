@@ -22,14 +22,14 @@ mouse_handler = mouse.MouseStateHandler()
 display_window.push_handlers(key_handler, mouse_handler)
 
 
-camera_attrs = {
-    'position': [0.0, 0.0, 0.0],
-    'scale': 1.0,
+simulation_map_attrs = {
+    'num_rows': 5,
+    'num_cols': 5,
+    'tile_size': 64,
 }
 
 
-simulation_map_attrs = {
-    'num_rows': 15,
-    'num_cols': 15,
-    'tile_size': 64,
+camera_attrs = {
+    'position': [0.0, 0.0, 0.0],
+    'scale': 1.0,
 }
